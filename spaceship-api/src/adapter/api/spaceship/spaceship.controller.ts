@@ -30,9 +30,9 @@ export class SpaceshipController {
 
   @Post()
   @Log()
-  async create(@Body() dto: CreateSpaceShipDTO): Promise<SpaceshipDTO> {
-    const spaceship = await this.useCases.create(dto);
-    return SpaceshipMapper.toApi(spaceship);
+  async create(@Body() dto: CreateSpaceShipDTO): Promise<string> {
+    const id = await this.useCases.create(dto);
+    return id;
   }
 
   @Delete(':id')

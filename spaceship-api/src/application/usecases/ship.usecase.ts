@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { SpaceshipModel } from 'src/adapter/db/entities/spaceship.model';
 import { ApiException } from 'src/domain/base/api.exception';
 import { CreateSpaceShipDTO } from 'src/domain/dto/create-spaceship.dto';
 import { DeleteSpaceshipDTO } from 'src/domain/dto/delete-spaceship.dto';
@@ -12,25 +11,34 @@ export class ShipUseCases {
   constructor(private readonly repository: SpaceshipRepositoryAbstract) {}
 
   async getAll(): Promise<SpaceshipEntity[]> {
-    const models = await this.repository.getAll();
-    return models.map((m) => m.toEntity());
+    const entities = await this.repository.getAll();
+    return entities;
   }
 
-  async create(dto: CreateSpaceShipDTO): Promise<SpaceshipEntity> {
-    const model = new SpaceshipModel().fromDTO(dto);
+  async create(dto: CreateSpaceShipDTO): Promise<string> {
+    const entity = new SpaceshipEntity();
+    entity.armour = dto.armour;
+    entity.jump = dto.jump;
+    entity.maxFuel = dto.maxFuel;
+    entity.maxPower = dto.maxPower;
+    entity.name = dto.name;
+    entity.size = dto.size;
+    entity.thrust = dto.thrust;
+    entity.createdDate = new Date();
+    entity.updatedDate = new Date();
     if (await this.repository.existsWithName(dto.name)) {
       throw new ApiException(
-        `A spaceship with name ${model.name} already exists`,
+        `A spaceship with name ${dto.name} already exists`,
       );
     }
 
-    const created = await this.repository.create(model);
-    return created.toEntity();
+    const created = await this.repository.create(entity);
+    return created;
   }
 
   async delete(dto: DeleteSpaceshipDTO): Promise<SpaceshipEntity> {
-    const model = await this.repository.remove(dto.id);
-    return model.toEntity();
+    const entity = await this.repository.remove(dto.id);
+    return entity;
   }
 
   async update(id: string, dto: UpdateSpaceshipDTO): Promise<void> {

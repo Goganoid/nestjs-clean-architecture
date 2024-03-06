@@ -1,13 +1,13 @@
 import { DeepPartial } from 'src/domain/base/deep-partial';
 
-export abstract class GenericRepository<T> {
-  abstract getAll(): Promise<T[]>;
+export abstract class GenericRepository<T, E> {
+  abstract getAll(): Promise<E[]>;
 
-  abstract get(id: string): Promise<T | null>;
+  abstract get(id: string): Promise<E | null>;
 
-  abstract create(item: T): Promise<T>;
+  abstract create(item: E): Promise<string>;
 
   abstract update(id: string, item: DeepPartial<T>): Promise<void>;
 
-  abstract remove(id: string): Promise<T>;
+  abstract remove(id: string): Promise<E>;
 }

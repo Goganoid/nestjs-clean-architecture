@@ -1,6 +1,4 @@
 import { BaseModelEntity } from 'src/domain/base/base.interface';
-import { CreateSpaceShipDTO } from 'src/domain/dto/create-spaceship.dto';
-import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,7 +8,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class SpaceshipModel implements BaseModelEntity<SpaceshipEntity> {
+export class SpaceshipModel implements BaseModelEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -40,59 +38,4 @@ export class SpaceshipModel implements BaseModelEntity<SpaceshipEntity> {
 
   @UpdateDateColumn()
   updatedDate: Date;
-
-  toEntity(): SpaceshipEntity {
-    return {
-      armour: this.armour,
-      id: this.id,
-      jump: this.jump,
-      maxFuel: this.maxFuel,
-      maxPower: this.maxPower,
-      name: this.name,
-      size: this.size,
-      thrust: this.thrust,
-      createdDate: this.createdDate,
-      updatedDate: this.updatedDate,
-    };
-  }
-
-  fromEntity({
-    armour,
-    id,
-    jump,
-    maxFuel,
-    maxPower,
-    name,
-    size,
-    thrust,
-  }: SpaceshipEntity) {
-    this.id = id;
-    this.name = name;
-    this.size = size;
-    this.thrust = thrust;
-    this.armour = armour;
-    this.jump = jump;
-    this.maxFuel = maxFuel;
-    this.maxPower = maxPower;
-    return this;
-  }
-
-  fromDTO({
-    armour,
-    jump,
-    maxFuel,
-    maxPower,
-    name,
-    size,
-    thrust,
-  }: CreateSpaceShipDTO) {
-    this.name = name;
-    this.size = size;
-    this.thrust = thrust;
-    this.armour = armour;
-    this.jump = jump;
-    this.maxFuel = maxFuel;
-    this.maxPower = maxPower;
-    return this;
-  }
 }
