@@ -36,6 +36,7 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20",
     "uuid": "^9.0.1"
   },
@@ -69,7 +70,9 @@
       "ts"
     ],
     "rootDir": "./",
-    "modulePaths": ["<rootDir>"],
+    "modulePaths": [
+      "<rootDir>"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"

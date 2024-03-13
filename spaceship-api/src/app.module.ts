@@ -13,8 +13,16 @@ import { ApplicationModule } from './application/application.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        configService.getOrThrow('typeorm'),
+      useFactory:
+        process.env.NODE_ENV === 'test'
+          ? () => ({
+              type: 'sqlite',
+              database: ':memory:',
+              entities: [`${__dirname}/**/*.model{.ts,.js}`],
+              synchronize: true,
+            })
+          : async (configService: ConfigService) =>
+              configService.getOrThrow('typeorm'),
     }),
     AdapterModule,
     ApplicationModule,
