@@ -7,10 +7,6 @@ import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-// const sqlTime = () => {
-//   return new Date().toISOString().slice(0, 19).replace('T', ' ');
-// };
-
 describe('SpaceshipController (e2e)', () => {
   let app: INestApplication;
   const TEST_ID = uuid();
