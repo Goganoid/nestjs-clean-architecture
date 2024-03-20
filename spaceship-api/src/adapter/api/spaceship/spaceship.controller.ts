@@ -4,15 +4,15 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
+import { Log } from 'src/adapter/api/utils/log';
 import { ShipUseCases } from 'src/application/usecases/ship.usecase';
 import { CreateSpaceShipDTO } from 'src/domain/dto/create-spaceship.dto';
-import { SpaceshipDTO } from 'src/domain/dto/spaceship.dto';
-import { Log } from 'src/adapter/api/utils/log';
 import { DeleteSpaceshipDTO } from 'src/domain/dto/delete-spaceship.dto';
 import { IdDTO } from 'src/domain/dto/id.dto';
+import { SpaceshipDTO } from 'src/domain/dto/spaceship.dto';
 import { UpdateSpaceshipDTO } from 'src/domain/dto/update-spaceship.dto';
 import { SpaceshipMapper } from './spaceship.mapper';
 
@@ -24,8 +24,16 @@ export class SpaceshipController {
   @Log()
   async getAll(): Promise<SpaceshipDTO[]> {
     const spaceships = await this.useCases.getAll();
-    const dtos = spaceships.map((e) => SpaceshipMapper.toApi(e));
-    return dtos;
+    const result = spaceships.map((e) => SpaceshipMapper.toApi(e));
+    return result;
+  }
+
+  @Get(':id')
+  @Log()
+  async getOne(@Param() dto: IdDTO): Promise<SpaceshipDTO> {
+    const spaceship = await this.useCases.getOne(dto);
+    const result = SpaceshipMapper.toApi(spaceship);
+    return result;
   }
 
   @Post()
@@ -42,7 +50,7 @@ export class SpaceshipController {
     return SpaceshipMapper.toApi(spaceship);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Log()
   async update(@Param() { id }: IdDTO, @Body() dto: UpdateSpaceshipDTO) {
     await this.useCases.update(id, dto);

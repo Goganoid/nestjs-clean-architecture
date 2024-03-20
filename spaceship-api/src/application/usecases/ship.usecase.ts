@@ -5,6 +5,7 @@ import { DeleteSpaceshipDTO } from 'src/domain/dto/delete-spaceship.dto';
 import { UpdateSpaceshipDTO } from 'src/domain/dto/update-spaceship.dto';
 import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
 import { SpaceshipRepositoryAbstract } from '../repositories/spaceship.abstract-repository';
+import { IdDTO } from 'src/domain/dto/id.dto';
 
 @Injectable()
 export class ShipUseCases {
@@ -13,6 +14,12 @@ export class ShipUseCases {
   async getAll(): Promise<SpaceshipEntity[]> {
     const entities = await this.repository.getAll();
     return entities;
+  }
+
+  async getOne({ id }: IdDTO): Promise<SpaceshipEntity> {
+    const entity = await this.repository.get(id);
+    if (!entity) throw new ApiException('Spaceship not found', 404);
+    return entity;
   }
 
   async create(dto: CreateSpaceShipDTO): Promise<string> {

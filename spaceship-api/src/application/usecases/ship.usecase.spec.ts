@@ -9,6 +9,7 @@ import { ShipUseCases } from './ship.usecase';
 // Mocking the repository
 class MockSpaceshipRepository {
   getAll() {}
+  get(_id: string) {}
   existsWithName(_name: string) {}
   create(_model: any) {}
   remove(_id: string) {}
@@ -101,5 +102,31 @@ describe('ShipUseCases', () => {
     const spy = jest.spyOn(repository, 'update');
     await service.update(id, dto);
     expect(spy).toHaveBeenCalledWith(id, dto);
+  });
+
+  it('should return a spaceship', async () => {
+    const id = '1';
+    const entity = {
+      id,
+      name: 'New Ship 2',
+      armour: 2,
+      jump: 2,
+      maxFuel: 2,
+      maxPower: 2,
+      size: 2,
+      thrust: 2,
+      createdDate: new Date(),
+      updatedDate: new Date(),
+    };
+    const spy = jest.spyOn(repository, 'get').mockResolvedValue(entity);
+    const result = await service.getOne({ id });
+    expect(spy).toHaveBeenCalledWith(id);
+    expect(result).toEqual(entity);
+  });
+
+  it('should throw not found', async () => {
+    const id = '1';
+    jest.spyOn(repository, 'get').mockResolvedValue(null);
+    expect(service.getOne({ id })).rejects.toThrow(ApiException);
   });
 });

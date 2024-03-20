@@ -60,6 +60,33 @@ describe('SpaceshipController (e2e)', () => {
     expect(response.body.length).toBe(2);
   });
 
+  it('/spaceship/:id (GET)', async () => {
+    const response = await request(app.getHttpServer()).get(
+      `/spaceship/${TEST_ID}`,
+    );
+    expect(response.status).toEqual(200);
+    expect(response.body).toBeDefined();
+    expect(typeof response.body === 'object').toBeTruthy();
+  });
+
+  it('/spaceship/:id (GET) should fail', async () => {
+    const response = await request(app.getHttpServer()).get(
+      `/spaceship/${uuid()}`,
+    );
+    expect(response.status).toEqual(404);
+    expect(response.body).toBeDefined();
+    expect(typeof response.body === 'object').toBeTruthy();
+  });
+
+  it('/spaceship/:id (GET) should fail validation', async () => {
+    const response = await request(app.getHttpServer()).get(
+      `/spaceship/NOT_UUID`,
+    );
+    expect(response.status).toEqual(400);
+    expect(response.body).toBeDefined();
+    expect(typeof response.body === 'object').toBeTruthy();
+  });
+
   it('/spaceship (POST)', async () => {
     const response = await request(app.getHttpServer())
       .post('/spaceship')
@@ -126,16 +153,16 @@ describe('SpaceshipController (e2e)', () => {
     expect(response.status).toEqual(404);
   });
 
-  it('/spaceship (UPDATE)', async () => {
+  it('/spaceship (PATCH)', async () => {
     const response = await request(app.getHttpServer())
-      .put(`/spaceship/${UPDATE_ID}`)
+      .patch(`/spaceship/${UPDATE_ID}`)
       .send({ name: 'New Name' });
     expect(response.status).toEqual(200);
   });
 
-  it('/spaceship (UPDATE) should fail', async () => {
+  it('/spaceship (PATCH) should fail', async () => {
     const response = await request(app.getHttpServer())
-      .put(`/spaceship/${uuid()}`)
+      .patch(`/spaceship/${uuid()}`)
       .send({ name: 'New Name' });
     expect(response.status).toEqual(404);
   });
