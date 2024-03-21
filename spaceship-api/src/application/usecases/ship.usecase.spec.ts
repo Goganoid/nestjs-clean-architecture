@@ -5,16 +5,7 @@ import { ApiException } from '../../domain/base/api.exception';
 import { CreateSpaceShipDTO } from '../../domain/dto/create-spaceship.dto';
 import { SpaceshipRepositoryAbstract } from '../repositories/spaceship.abstract-repository';
 import { ShipUseCases } from './ship.usecase';
-
-// Mocking the repository
-class MockSpaceshipRepository {
-  getAll() {}
-  get(_id: string) {}
-  existsWithName(_name: string) {}
-  create(_model: any) {}
-  remove(_id: string) {}
-  update(_id: string, _dto: any) {}
-}
+import { MockSpaceshipRepository } from '../mocks/repository.mocks';
 
 describe('ShipUseCases', () => {
   let service: ShipUseCases;
