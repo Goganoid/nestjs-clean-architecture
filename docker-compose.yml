@@ -14,7 +14,6 @@ services:
     depends_on:
       - postgres
 
-
   postgres:
     image: postgres:14-alpine
     ports:
@@ -25,3 +24,14 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=spaceship_db
+  
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ~/apps/mongo:/var/lib/postgresql/data

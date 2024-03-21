@@ -39,7 +39,7 @@ export class SpaceshipRepository implements SpaceshipRepositoryAbstract {
     );
     return created.id;
   }
-  async update(id: string, partialModel: DeepPartial<SpaceshipModel>) {
+  async update(id: string, partialModel: DeepPartial<SpaceshipEntity>) {
     const exists = await this.spaceshipRepository.existsBy({ id });
     if (!exists) throw new ApiException('Spaceship not found', 404);
     await this.spaceshipRepository.update(id, partialModel);
