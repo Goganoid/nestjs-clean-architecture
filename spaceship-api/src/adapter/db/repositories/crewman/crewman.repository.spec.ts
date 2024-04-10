@@ -73,7 +73,6 @@ describe('CrewmanRepository', () => {
         .mockResolvedValueOnce(expectedModel);
 
       const result = await repository.get('1');
-      console.log(result);
       expect(result?.id).toEqual(expectedModel._id);
     });
 

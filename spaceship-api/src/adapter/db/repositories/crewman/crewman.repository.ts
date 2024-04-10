@@ -22,11 +22,11 @@ export class CrewmanRepository implements CrewmanRepositoryAbstract {
     if (model) return CrewmanDbMapper.toEntity(model);
     return null;
   }
-  async create(item: CrewmanEntity): Promise<string> {
+  async create(item: CrewmanEntity) {
     const created = await this.crewmanModel.create(
       CrewmanDbMapper.fromEntity(item),
     );
-    return created._id;
+    return CrewmanDbMapper.toEntity(created);
   }
   async update(id: string, item: Partial<CrewmanEntity>): Promise<void> {
     const exists = await this.crewmanModel.exists({ _id: id });

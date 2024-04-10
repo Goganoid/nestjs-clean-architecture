@@ -31,23 +31,24 @@ export class CrewmanController {
   @Get(':id')
   @Log()
   async getOne(@Param() dto: ObjectIdDTO): Promise<CrewmanDTO> {
-    const spaceship = await this.useCases.getOne(dto);
-    const result = CrewmanMapper.toApi(spaceship);
+    const entity = await this.useCases.getOne(dto);
+    const result = CrewmanMapper.toApi(entity);
     return result;
   }
 
   @Post()
   @Log()
-  async create(@Body() dto: CreateCrewmanDTO): Promise<string> {
-    const id = await this.useCases.create(dto);
-    return id;
+  async create(@Body() dto: CreateCrewmanDTO) {
+    const entity = await this.useCases.create(dto);
+    const result = CrewmanMapper.toApi(entity);
+    return result;
   }
 
   @Delete(':id')
   @Log()
   async delete(@Param() dto: DeleteCrewmanDTO): Promise<CrewmanDTO> {
-    const spaceship = await this.useCases.delete(dto);
-    return CrewmanMapper.toApi(spaceship);
+    const entity = await this.useCases.delete(dto);
+    return CrewmanMapper.toApi(entity);
   }
 
   @Patch(':id')

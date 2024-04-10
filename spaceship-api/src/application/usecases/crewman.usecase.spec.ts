@@ -11,6 +11,8 @@ import {
 import { CrewmanRepositoryAbstract } from '../repositories/crewman.abstract-repository';
 import { SpaceshipRepositoryAbstract } from '../repositories/spaceship.abstract-repository';
 import { CrewmanUseCases } from './crewman.usecase';
+import { CrewmanModel } from 'src/adapter/db/entities/crewman.model';
+import { CrewmanEntity } from 'src/domain/entities/crewman.entity';
 
 describe('CrewmanUseCases', () => {
   let service: CrewmanUseCases;
@@ -54,14 +56,16 @@ describe('CrewmanUseCases', () => {
       salary: 500,
       shipId: 'someId',
     };
+    const createdEntity = new CrewmanEntity();
+    createdEntity.id = id;
     jest
       .spyOn(spaceshipRepository, 'get')
       .mockResolvedValueOnce(new SpaceshipEntity());
-    jest.spyOn(crewmanRepository, 'create').mockResolvedValue(id);
+    jest.spyOn(crewmanRepository, 'create').mockResolvedValue(createdEntity);
 
     const result = await service.create(dto);
 
-    expect(result).toEqual(id);
+    expect(result.id).toEqual(id);
   });
 
   it('should throw an error if spaceshipId does not exist', async () => {

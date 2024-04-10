@@ -26,7 +26,7 @@ export class CrewmanUseCases {
     return entity;
   }
 
-  async create(dto: CreateCrewmanDTO): Promise<string> {
+  async create(dto: CreateCrewmanDTO) {
     const entity = new CrewmanEntity();
     entity.birthDate = new Date(dto.birthDate);
     entity.name = dto.name;

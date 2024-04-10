@@ -88,7 +88,7 @@ describe('SpaceshipController (e2e)', () => {
       shipId: SPACESHIP_ID,
     });
     expect(response.status).toEqual(201);
-    expect(response.text).toBeDefined();
+    expect(response.body).toBeDefined();
   });
 
   it('/crew (POST) should fail because ship does not exist', async () => {
