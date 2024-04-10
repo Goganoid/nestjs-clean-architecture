@@ -5,7 +5,7 @@ export abstract class GenericRepository<E> {
 
   abstract get(id: string): Promise<E | null>;
 
-  abstract create(item: E): Promise<string>;
+  abstract create(item: E): Promise<E>;
 
   abstract update(id: string, item: DeepPartial<E>): Promise<void>;
 

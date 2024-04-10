@@ -16,7 +16,7 @@ import { SpaceshipDTO } from 'src/domain/dto/spaceship.dto';
 import { UpdateSpaceshipDTO } from 'src/domain/dto/update-spaceship.dto';
 import { SpaceshipMapper } from './spaceship.mapper';
 
-@Controller('spaceship')
+@Controller('spaceships')
 export class SpaceshipController {
   constructor(private readonly useCases: ShipUseCases) {}
 
@@ -38,9 +38,10 @@ export class SpaceshipController {
 
   @Post()
   @Log()
-  async create(@Body() dto: CreateSpaceShipDTO): Promise<string> {
-    const id = await this.useCases.create(dto);
-    return id;
+  async create(@Body() dto: CreateSpaceShipDTO) {
+    const entity = await this.useCases.create(dto);
+    const result = SpaceshipMapper.toApi(entity);
+    return result;
   }
 
   @Delete(':id')

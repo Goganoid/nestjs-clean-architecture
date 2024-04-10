@@ -44,11 +44,16 @@ describe('ShipUseCases', () => {
     };
     const id = 'id';
     jest.spyOn(repository, 'existsWithName').mockResolvedValueOnce(false);
-    jest.spyOn(repository, 'create').mockResolvedValue(id);
+    jest.spyOn(repository, 'create').mockResolvedValue({
+      ...dto,
+      id,
+      createdDate: new Date(),
+      updatedDate: new Date(),
+    });
 
     const result = await service.create(dto);
 
-    expect(result).toEqual(id);
+    expect(result.id).toEqual(id);
   });
 
   it('should throw an error if spaceship already exists', async () => {
