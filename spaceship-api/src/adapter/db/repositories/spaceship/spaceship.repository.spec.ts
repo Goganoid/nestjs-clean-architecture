@@ -95,10 +95,12 @@ describe('SpaceshipRepository', () => {
   describe('get', () => {
     it('should return a spaceship entity by id', async () => {
       const expectedEntity: SpaceshipEntity = new SpaceshipEntity();
+      const foundModel = new SpaceshipModel();
+      foundModel.id = '1';
       expectedEntity.id = '1';
       jest
         .spyOn(spaceshipModelRepository, 'findOneBy')
-        .mockResolvedValueOnce(expectedEntity);
+        .mockResolvedValueOnce(foundModel);
 
       const result = await repository.get('1');
 

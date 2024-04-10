@@ -22,7 +22,7 @@ export class ShipUseCases {
     return entity;
   }
 
-  async create(dto: CreateSpaceShipDTO): Promise<string> {
+  async create(dto: CreateSpaceShipDTO): Promise<SpaceshipEntity> {
     const entity = new SpaceshipEntity();
     entity.armour = dto.armour;
     entity.jump = dto.jump;
@@ -39,8 +39,7 @@ export class ShipUseCases {
       );
     }
 
-    const created = await this.repository.create(entity);
-    return created;
+    return await this.repository.create(entity);
   }
 
   async delete(dto: DeleteSpaceshipDTO): Promise<SpaceshipEntity> {

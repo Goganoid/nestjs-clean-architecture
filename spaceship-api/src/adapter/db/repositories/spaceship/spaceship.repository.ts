@@ -37,7 +37,7 @@ export class SpaceshipRepository implements SpaceshipRepositoryAbstract {
     const created = await this.spaceshipRepository.save(
       SpaceshipDbMapper.fromEntity(entity),
     );
-    return created.id;
+    return SpaceshipDbMapper.toEntity(created);
   }
   async update(id: string, partialModel: DeepPartial<SpaceshipModel>) {
     const exists = await this.spaceshipRepository.existsBy({ id });
