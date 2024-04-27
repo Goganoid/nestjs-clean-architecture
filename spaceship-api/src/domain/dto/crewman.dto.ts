@@ -7,5 +7,4 @@ export class CrewmanDTO implements BasePresenterEntity {
   role: CrewmanRole;
   birthDate: Date;
   salary: number;
-  shipId: string;
 }

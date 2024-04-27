@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SpaceshipRepositoryAbstract } from 'src/application/repositories/spaceship.abstract-repository';
+import { SpaceshipRepository } from 'src/application/repositories/spaceship.abstract-repository';
 import { SpaceshipModel } from './entities/spaceship.model';
-import { SpaceshipRepository } from './repositories/spaceship/spaceship.repository';
+import { SpaceshipRepositoryImplementation } from './repositories/spaceship/spaceship.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CrewmanModel, CrewmanSchema } from './entities/crewman.model';
-import { CrewmanRepositoryAbstract } from 'src/application/repositories/crewman.abstract-repository';
-import { CrewmanRepository } from './repositories/crewman/crewman.repository';
+import { CrewmanRepository } from 'src/application/repositories/crewman.abstract-repository';
+import { CrewmanRepositoryImplementation } from './repositories/crewman/crewman.repository';
+import { BlobClient } from 'src/application/interfaces/blob-client';
+import { BlobClientImplementation } from './blob/blob-client';
 
 @Module({
   imports: [
@@ -17,14 +19,18 @@ import { CrewmanRepository } from './repositories/crewman/crewman.repository';
   ],
   providers: [
     {
-      provide: SpaceshipRepositoryAbstract,
-      useClass: SpaceshipRepository,
+      provide: SpaceshipRepository,
+      useClass: SpaceshipRepositoryImplementation,
     },
     {
-      provide: CrewmanRepositoryAbstract,
-      useClass: CrewmanRepository,
+      provide: CrewmanRepository,
+      useClass: CrewmanRepositoryImplementation,
+    },
+    {
+      provide: BlobClient,
+      useClass: BlobClientImplementation,
     },
   ],
-  exports: [SpaceshipRepositoryAbstract, CrewmanRepositoryAbstract],
+  exports: [SpaceshipRepository, CrewmanRepository, BlobClient],
 })
 export class DbModule {}

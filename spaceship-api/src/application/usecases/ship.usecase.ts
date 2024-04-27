@@ -4,12 +4,12 @@ import { CreateSpaceShipDTO } from 'src/domain/dto/create-spaceship.dto';
 import { DeleteSpaceshipDTO } from 'src/domain/dto/delete-spaceship.dto';
 import { UpdateSpaceshipDTO } from 'src/domain/dto/update-spaceship.dto';
 import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
-import { SpaceshipRepositoryAbstract } from '../repositories/spaceship.abstract-repository';
+import { SpaceshipRepository } from '../repositories/spaceship.abstract-repository';
 import { IdDTO } from 'src/domain/dto/id.dto';
 
 @Injectable()
 export class ShipUseCases {
-  constructor(private readonly repository: SpaceshipRepositoryAbstract) {}
+  constructor(private readonly repository: SpaceshipRepository) {}
 
   async getAll(): Promise<SpaceshipEntity[]> {
     const entities = await this.repository.getAll();

@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { ApiException } from 'src/domain/base/api.exception';
 import { MockType } from 'src/infrastructure/tests/types';
 import { CrewmanModel } from '../../entities/crewman.model';
-import { CrewmanRepository } from './crewman.repository';
+import { CrewmanRepositoryImplementation } from './crewman.repository';
 
 const repositoryMockFactory: () => MockType<Model<any>> = jest.fn(() => ({
   exists: jest.fn(),
@@ -14,13 +14,13 @@ const repositoryMockFactory: () => MockType<Model<any>> = jest.fn(() => ({
 }));
 
 describe('CrewmanRepository', () => {
-  let repository: CrewmanRepository;
+  let repository: CrewmanRepositoryImplementation;
   let mongooseModel: Model<CrewmanModel>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CrewmanRepository,
+        CrewmanRepositoryImplementation,
         {
           provide: getModelToken(CrewmanModel.name),
           useFactory: repositoryMockFactory,
@@ -28,7 +28,9 @@ describe('CrewmanRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<CrewmanRepository>(CrewmanRepository);
+    repository = module.get<CrewmanRepositoryImplementation>(
+      CrewmanRepositoryImplementation,
+    );
     mongooseModel = module.get<Model<CrewmanModel>>(
       getModelToken(CrewmanModel.name),
     );

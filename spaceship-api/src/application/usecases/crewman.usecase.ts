@@ -5,15 +5,11 @@ import { DeleteCrewmanDTO } from 'src/domain/dto/delete-crewman.dto';
 import { IdDTO } from 'src/domain/dto/id.dto';
 import { UpdateCrewmanDTO } from 'src/domain/dto/update-crewman.dto';
 import { CrewmanEntity } from 'src/domain/entities/crewman.entity';
-import { CrewmanRepositoryAbstract } from '../repositories/crewman.abstract-repository';
-import { SpaceshipRepositoryAbstract } from '../repositories/spaceship.abstract-repository';
+import { CrewmanRepository } from '../repositories/crewman.abstract-repository';
 
 @Injectable()
 export class CrewmanUseCases {
-  constructor(
-    private readonly crewmanRepository: CrewmanRepositoryAbstract,
-    private readonly spaceshipRepository: SpaceshipRepositoryAbstract,
-  ) {}
+  constructor(private readonly crewmanRepository: CrewmanRepository) {}
 
   async getAll(): Promise<CrewmanEntity[]> {
     const entities = await this.crewmanRepository.getAll();
@@ -32,14 +28,6 @@ export class CrewmanUseCases {
     entity.name = dto.name;
     entity.role = dto.role;
     entity.salary = dto.salary;
-    entity.shipId = dto.shipId;
-
-    const spaceship = await this.spaceshipRepository.get(entity.shipId);
-    if (!spaceship) {
-      throw new ApiException(
-        `A spaceship with id ${entity.shipId} does not exist`,
-      );
-    }
 
     const created = await this.crewmanRepository.create(entity);
     return created;
