@@ -4,7 +4,7 @@ import { ApiException } from 'src/domain/base/api.exception';
 import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
 import { Repository } from 'typeorm';
 import { SpaceshipModel } from '../../entities/spaceship.model';
-import { SpaceshipRepository } from './spaceship.repository';
+import { SpaceshipRepositoryImplementation } from './spaceship.repository';
 
 type MockType<T> = {
   [P in keyof T]?: jest.Mock<object>;
@@ -22,13 +22,13 @@ const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(() => ({
 }));
 
 describe('SpaceshipRepository', () => {
-  let repository: SpaceshipRepository;
+  let repository: SpaceshipRepositoryImplementation;
   let spaceshipModelRepository: Repository<SpaceshipModel>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SpaceshipRepository,
+        SpaceshipRepositoryImplementation,
         {
           provide: getRepositoryToken(SpaceshipModel),
           useFactory: repositoryMockFactory,
@@ -36,7 +36,7 @@ describe('SpaceshipRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<SpaceshipRepository>(SpaceshipRepository);
+    repository = module.get<SpaceshipRepositoryImplementation>(SpaceshipRepositoryImplementation);
     spaceshipModelRepository = module.get<Repository<SpaceshipModel>>(
       getRepositoryToken(SpaceshipModel),
     );

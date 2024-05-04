@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BaseModelEntity,
   BasePayloadEntity,
   BasePresenterEntity,
 } from 'src/domain/base/base.interface';
@@ -16,6 +17,6 @@ export interface ApiMapper<
   toEntity(payload: R): T;
 }
 
-export type Mapper<T extends BaseEntity, R extends BasePayloadEntity> = (
+export type Mapper<T extends BaseEntity, R extends BaseModelEntity> = (
   entity: T,
 ) => R;

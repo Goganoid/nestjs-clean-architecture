@@ -14,7 +14,6 @@ services:
     depends_on:
       - postgres
 
-
   postgres:
     image: postgres:14-alpine
     ports:
@@ -25,3 +24,34 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=spaceship_db
+  
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ~/apps/mongo:/var/lib/postgresql/data
+
+  s3:
+    container_name: "${LOCALSTACK_DOCKER_NAME-s3}"
+    image: localstack/localstack
+    network_mode: bridge
+    ports:
+      - "4566-4599:4566-4599"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DEFAULT_REGION=eu-central-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DISABLE_CORS_CHECKS=1
+      - DISABLE_CUSTOM_CORS_S3=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "//var/run/docker.sock:/var/run/docker.sock"
+      - "./scripts/localstack:/etc/localstack/init/ready.d"

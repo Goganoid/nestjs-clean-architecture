@@ -3,38 +3,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SpaceshipModel } from '../../adapter/db/entities/spaceship.model';
 import { ApiException } from '../../domain/base/api.exception';
 import { CreateSpaceShipDTO } from '../../domain/dto/create-spaceship.dto';
-import { SpaceshipRepositoryAbstract } from '../repositories/spaceship.abstract-repository';
+import { SpaceshipRepository } from '../repositories/spaceship.abstract-repository';
 import { ShipUseCases } from './ship.usecase';
-
-// Mocking the repository
-class MockSpaceshipRepository {
-  getAll() {}
-  get(_id: string) {}
-  existsWithName(_name: string) {}
-  create(_model: any) {}
-  remove(_id: string) {}
-  update(_id: string, _dto: any) {}
-}
+import { MockSpaceshipRepository } from '../mocks/repository.mocks';
 
 describe('ShipUseCases', () => {
   let service: ShipUseCases;
-  let repository: SpaceshipRepositoryAbstract;
+  let repository: SpaceshipRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShipUseCases,
         {
-          provide: SpaceshipRepositoryAbstract,
+          provide: SpaceshipRepository,
           useClass: MockSpaceshipRepository,
         },
       ],
     }).compile();
 
     service = module.get<ShipUseCases>(ShipUseCases);
-    repository = module.get<SpaceshipRepositoryAbstract>(
-      SpaceshipRepositoryAbstract,
-    );
+    repository = module.get<SpaceshipRepository>(SpaceshipRepository);
   });
 
   it('should be defined', () => {
