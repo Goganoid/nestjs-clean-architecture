@@ -6,12 +6,14 @@ import { BlobClient } from '../interfaces/blob-client';
 import { CrewmanRepository } from '../repositories/crewman.abstract-repository';
 import { CrewInSpaceshipUseCases } from './crew-in-spaceship.usecase';
 import { CrewmanUseCases } from './crewman.usecase';
+import { SpaceshipCrewMessagePublisher } from '../interfaces/message-broker';
 
 describe('CrewInSpaceshipUseCases', () => {
   let service: CrewInSpaceshipUseCases;
   let crewmanRepository: jest.Mocked<CrewmanRepository>;
   let crewmanUseCases: jest.Mocked<CrewmanUseCases>;
   let blobClient: jest.Mocked<BlobClient>;
+  let publisher: jest.Mocked<SpaceshipCrewMessagePublisher>;
 
   beforeEach(async () => {
     const { unit, unitRef } = TestBed.create(CrewInSpaceshipUseCases).compile();
@@ -21,6 +23,7 @@ describe('CrewInSpaceshipUseCases', () => {
     crewmanRepository = unitRef.get(CrewmanRepository as any);
     crewmanUseCases = unitRef.get(CrewmanUseCases);
     blobClient = unitRef.get(BlobClient as any);
+    publisher = unitRef.get(SpaceshipCrewMessagePublisher as any);
   });
 
   afterEach(() => {
@@ -104,6 +107,7 @@ describe('CrewInSpaceshipUseCases', () => {
       const result = await service.createByShip(mockShipId, mockDto);
 
       expect(result).toEqual(mockCrewman);
+      expect(publisher.publish).toHaveBeenCalled();
       expect(blobClient.createFile).toHaveBeenCalledWith(
         expect.stringContaining(mockCrewman.id),
       );

@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdapterModule } from './adapter/adapter.module';
 import { ApplicationModule } from './application/application.module';
+import { bullModuleImports } from './infrastructure/bull/config';
 import typeorm from './infrastructure/db/config';
 import { startMongoInMemory } from './infrastructure/tests/mongo-inmemory';
 
@@ -44,6 +45,7 @@ import { startMongoInMemory } from './infrastructure/tests/mongo-inmemory';
       },
       inject: [ConfigService],
     }),
+    ...bullModuleImports,
     AdapterModule,
     ApplicationModule,
   ],

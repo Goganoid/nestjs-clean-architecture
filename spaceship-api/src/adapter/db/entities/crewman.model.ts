@@ -16,6 +16,8 @@ export class CrewmanModel implements BaseModelEntity {
   birthDate: Date;
   @Prop()
   salary: number;
+  @Prop()
+  spaceshipId?: string;
 }
 
 export const CrewmanSchema = SchemaFactory.createForClass(CrewmanModel);

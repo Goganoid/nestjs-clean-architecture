@@ -36,6 +36,15 @@ services:
     volumes:
       - ~/apps/mongo:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass REDIS
+    volumes:
+      - ./.cache:/data
+
   s3:
     container_name: "${LOCALSTACK_DOCKER_NAME-s3}"
     image: localstack/localstack

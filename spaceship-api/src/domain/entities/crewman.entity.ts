@@ -7,4 +7,5 @@ export class CrewmanEntity implements BaseEntity {
   role: CrewmanRole;
   birthDate: Date;
   salary: number;
+  spaceshipId?: string;
 }
