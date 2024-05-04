@@ -14,7 +14,6 @@ export class SpacehipCrewMessageHandlerImplementation
 {
   private readonly listeners: Listener[] = [];
   async process(job: Job<Message<SpaceshipCrewMessageData>>) {
-    console.log('got message');
     this.listeners.forEach((listener) => listener(job.data));
   }
 
