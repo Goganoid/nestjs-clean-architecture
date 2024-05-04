@@ -12,7 +12,7 @@ import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-describe('SpaceshipController (e2e)', () => {
+describe('CrewmanController (e2e)', () => {
   let app: INestApplication;
   const SPACESHIP_ID = uuid();
   const CREWMAN_ID = new Types.ObjectId();
@@ -37,7 +37,6 @@ describe('SpaceshipController (e2e)', () => {
       name: 'Test',
       role: CrewmanRole.ENGINEER,
       salary: 500,
-      shipId: SPACESHIP_ID,
     },
     {
       _id: UPDATE_CREWMAN_ID,
@@ -45,7 +44,6 @@ describe('SpaceshipController (e2e)', () => {
       name: 'Test',
       role: CrewmanRole.ENGINEER,
       salary: 500,
-      shipId: SPACESHIP_ID,
     },
   ];
 
@@ -85,24 +83,9 @@ describe('SpaceshipController (e2e)', () => {
       role: CrewmanRole.CAPTAIN,
       birthDate: new Date().toISOString(),
       salary: 500,
-      shipId: SPACESHIP_ID,
     });
     expect(response.status).toEqual(201);
     expect(response.body).toBeDefined();
-  });
-
-  it('/crew (POST) should fail because ship does not exist', async () => {
-    const response = await request(app.getHttpServer()).post('/crew').send({
-      name: 'Name',
-      role: CrewmanRole.CAPTAIN,
-      birthDate: new Date().toISOString(),
-      salary: 500,
-      shipId: uuid(),
-    });
-    expect(response.status).toEqual(400);
-    expect(response.body).toBeDefined();
-    expect(response.body?.statusCode).toBeDefined();
-    expect(response.body?.message).toBeDefined();
   });
 
   it('/crew (POST) should fail validation', async () => {
@@ -111,7 +94,6 @@ describe('SpaceshipController (e2e)', () => {
       role: CrewmanRole.CAPTAIN,
       birthDate: new Date().toISOString(),
       salary: 'NOT A NUMBER',
-      shipId: SPACESHIP_ID,
     });
     expect(response.status).toEqual(400);
     expect(response.body).toBeDefined();

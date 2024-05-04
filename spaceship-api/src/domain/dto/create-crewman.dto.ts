@@ -18,6 +18,4 @@ export class CreateCrewmanDTO implements BasePresenterEntity {
   birthDate: string;
   @IsNumber()
   salary: number;
-  @IsString()
-  shipId: string;
 }

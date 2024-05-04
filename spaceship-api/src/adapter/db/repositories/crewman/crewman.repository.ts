@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CrewmanRepositoryAbstract } from 'src/application/repositories/crewman.abstract-repository';
+import { CrewmanRepository } from 'src/application/repositories/crewman.abstract-repository';
 import { ApiException } from 'src/domain/base/api.exception';
 import { CrewmanEntity } from 'src/domain/entities/crewman.entity';
 import { CrewmanModel } from '../../entities/crewman.model';
 import { CrewmanDbMapper } from '../../mappers/crewman-db.mapper';
 
 @Injectable()
-export class CrewmanRepository implements CrewmanRepositoryAbstract {
+export class CrewmanRepositoryImplementation implements CrewmanRepository {
   constructor(
     @InjectModel(CrewmanModel.name) private crewmanModel: Model<CrewmanModel>,
   ) {}

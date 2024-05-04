@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SpaceshipRepositoryAbstract } from 'src/application/repositories/spaceship.abstract-repository';
+import { SpaceshipRepository } from 'src/application/repositories/spaceship.abstract-repository';
 import { DeepPartial, Repository } from 'typeorm';
 import { SpaceshipModel } from '../../entities/spaceship.model';
 import { ApiException } from 'src/domain/base/api.exception';
@@ -8,7 +8,7 @@ import { SpaceshipDbMapper } from '../../mappers/spaceship-db.mapper';
 import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
 
 @Injectable()
-export class SpaceshipRepository implements SpaceshipRepositoryAbstract {
+export class SpaceshipRepositoryImplementation implements SpaceshipRepository {
   constructor(
     @InjectRepository(SpaceshipModel)
     private readonly spaceshipRepository: Repository<SpaceshipModel>,
