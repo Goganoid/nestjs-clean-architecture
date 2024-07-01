@@ -3,10 +3,10 @@ version: '3.9'
 services:
   api:
     build:
-      context: ./spaceship-api
+      context: ./app
     command: yarn run start:prod
     env_file:
-      - ./spaceship-api/.env
+      - ./app/.env
     expose:
       - 6006
     ports:
