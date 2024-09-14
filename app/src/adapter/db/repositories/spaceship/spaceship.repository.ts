@@ -6,6 +6,7 @@ import { SpaceshipModel } from '../../entities/spaceship.model';
 import { ApiException } from 'src/domain/base/api.exception';
 import { SpaceshipDbMapper } from '../../mappers/spaceship-db.mapper';
 import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
+import { Query } from 'src/application/interfaces/query';
 
 @Injectable()
 export class SpaceshipRepositoryImplementation implements SpaceshipRepository {
@@ -32,6 +33,22 @@ export class SpaceshipRepositoryImplementation implements SpaceshipRepository {
   async get(id: string) {
     const ship = await this.spaceshipRepository.findOneBy({ id });
     return ship ? SpaceshipDbMapper.toEntity(ship) : null;
+  }
+  async getOneWhere(query: Query<SpaceshipEntity>) {
+    const typedQuery = query satisfies Query<SpaceshipEntity & SpaceshipModel>;
+    const ship = await this.spaceshipRepository.findOne({
+      where: typedQuery.where,
+      relations: typedQuery.relations,
+    });
+    return ship ? SpaceshipDbMapper.toEntity(ship) : null;
+  }
+  async getWhere(query: Query<SpaceshipEntity>) {
+    const typedQuery = query satisfies Query<SpaceshipEntity & SpaceshipModel>;
+    const ships = await this.spaceshipRepository.find({
+      where: typedQuery.where,
+      relations: typedQuery.relations,
+    });
+    return ships.map((model) => SpaceshipDbMapper.toEntity(model));
   }
   async create(entity: SpaceshipEntity) {
     const created = await this.spaceshipRepository.save(

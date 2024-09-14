@@ -6,12 +6,30 @@ import { ApiException } from 'src/domain/base/api.exception';
 import { CrewmanEntity } from 'src/domain/entities/crewman.entity';
 import { CrewmanModel } from '../../entities/crewman.model';
 import { CrewmanDbMapper } from '../../mappers/crewman-db.mapper';
+import { Query } from 'src/application/interfaces/query';
+import { mapQuery } from './helpers/mapQuery';
 
 @Injectable()
 export class CrewmanRepositoryImplementation implements CrewmanRepository {
   constructor(
     @InjectModel(CrewmanModel.name) private crewmanModel: Model<CrewmanModel>,
   ) {}
+
+  async getWhere(query: Query<CrewmanEntity>): Promise<CrewmanEntity[]> {
+    const models = await this.crewmanModel.find({
+      ...mapQuery(query),
+    });
+    const entities = models.map(CrewmanDbMapper.toEntity);
+    return entities;
+  }
+  async getOneWhere(
+    query: Query<CrewmanEntity>,
+  ): Promise<CrewmanEntity | null> {
+    const model = await this.crewmanModel.findOne({
+      ...mapQuery(query),
+    });
+    return model ? CrewmanDbMapper.toEntity(model) : null;
+  }
   async getAll(): Promise<CrewmanEntity[]> {
     const models = await this.crewmanModel.find();
     const entities = models.map(CrewmanDbMapper.toEntity);
@@ -19,8 +37,7 @@ export class CrewmanRepositoryImplementation implements CrewmanRepository {
   }
   async get(id: string): Promise<CrewmanEntity | null> {
     const model = await this.crewmanModel.findById(id);
-    if (model) return CrewmanDbMapper.toEntity(model);
-    return null;
+    return model ? CrewmanDbMapper.toEntity(model) : null;
   }
   async create(item: CrewmanEntity) {
     const created = await this.crewmanModel.create(
