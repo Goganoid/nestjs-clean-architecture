@@ -7,19 +7,18 @@ WORKDIR /usr/src/app
 COPY .eslintrc.js .
 COPY tsconfig* ./
 COPY package.json ./
-COPY yarn.lock ./
+COPY package-lock.json ./
 COPY nest-cli.json ./
-# If you are using yarn
-RUN yarn install --ignore-engines
+RUN npm install
 
 COPY src ./src
 COPY test ./test
 
 # Build the application
-RUN yarn build
+RUN npm run build
 
 # Expose the port the app runs in
-EXPOSE 6006
+EXPOSE 6006 6007
 
 # The command to run the application
-CMD [ "yarn", "start:prod" ]
+CMD [ "npm", "run", "start:prod" ]

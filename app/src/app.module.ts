@@ -7,6 +7,7 @@ import { ApplicationModule } from './application/application.module';
 import { bullModuleImports } from './infrastructure/bull/config';
 import typeorm from './infrastructure/db/config';
 import { startMongoInMemory } from './infrastructure/tests/mongo-inmemory';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -48,6 +49,20 @@ import { startMongoInMemory } from './infrastructure/tests/mongo-inmemory';
     ...bullModuleImports,
     AdapterModule,
     ApplicationModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        // logger: logger,
+        transport:
+          process.env.NODE_ENV !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: {
+                  singleLine: true,
+                },
+              }
+            : undefined,
+      },
+    }),
   ],
   controllers: [],
   providers: [],
