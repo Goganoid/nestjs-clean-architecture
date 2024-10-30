@@ -1,25 +1,41 @@
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 // import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 // import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
-import * as process from 'process';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import {
   CompositePropagator,
-  W3CTraceContextPropagator,
   W3CBaggagePropagator,
+  W3CTraceContextPropagator,
 } from '@opentelemetry/core';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { Resource } from '@opentelemetry/resources';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import * as process from 'process';
 
-const metricReader = new PrometheusExporter({
-  port: 6007,
+const metricExporter = new OTLPMetricExporter({
+  url: 'http://localhost:4318/v1/metrics',
 });
 
+const metricReader = new PeriodicExportingMetricReader({
+  exporter: metricExporter,
+  exportIntervalMillis: 5000,
+});
+// const hostMetricReader = new PeriodicExportingMetricReader({
+//   exporter: metricExporter,
+//   exportIntervalMillis: 5000,
+// });
+
+// const meterProvider = new MeterProvider({
+//   readers: [hostMetricReader],
+// });
+
 const traceExporter = new OTLPTraceExporter({
-  url: 'http://otel-collector:4318/v1/traces',
+  url: 'http://localhost:4318/v1/traces',
 });
 
 const spanProcessor = new BatchSpanProcessor(traceExporter);
@@ -28,7 +44,24 @@ const otelSDK = new NodeSDK({
   metricReader,
   spanProcessor: spanProcessor,
   contextManager: new AsyncLocalStorageContextManager(),
-  instrumentations: [getNodeAutoInstrumentations()],
+  instrumentations: [
+    getNodeAutoInstrumentations({
+      '@opentelemetry/instrumentation-pg': {
+        enabled: true,
+        enhancedDatabaseReporting: true,
+        requireParentSpan: true,
+      },
+      '@opentelemetry/instrumentation-http': {
+        enabled: true,
+      },
+      '@opentelemetry/instrumentation-nestjs-core': {
+        enabled: true,
+      },
+    }),
+    // new HttpInstrumentation(),
+    // new ExpressInstrumentation(),
+    // new NestInstrumentation(),
+  ],
   textMapPropagator: new CompositePropagator({
     propagators: [
       new W3CTraceContextPropagator(),
@@ -39,9 +72,14 @@ const otelSDK = new NodeSDK({
       }),
     ],
   }),
+  resource: new Resource({
+    [ATTR_SERVICE_NAME]: `my-api`,
+  }),
 });
 
-export default otelSDK;
+// const hostMetrics = new HostMetrics({ meterProvider, name: 'host metrics' });
+
+export { otelSDK };
 // You can also use the shutdown method to gracefully shut down the SDK before process shutdown
 // or on some operating system signal.
 process.on('SIGTERM', () => {

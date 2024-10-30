@@ -4,10 +4,14 @@ import { ApiExceptionFilter } from './adapter/errors/api-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
-import otelSDK from './infrastructure/monitoring/otel/instrumentation';
+import {
+  otelSDK,
+  // hostMetrics,
+} from './infrastructure/monitoring/otel/instrumentation';
 
 async function bootstrap() {
   otelSDK.start();
+  // hostMetrics.start();
   const app = await NestFactory.create(AppModule);
   app.useLogger(app.get(Logger));
   app.useGlobalFilters(new ApiExceptionFilter());

@@ -1,7 +1,7 @@
 global:
-  scrape_interval: 1m
+  scrape_interval: 5s
 
 scrape_configs:
-  - job_name: 'api'
+  - job_name: 'app'
     static_configs:
-      - targets: ['api:6007']
+      - targets: ['otel-collector:9090']

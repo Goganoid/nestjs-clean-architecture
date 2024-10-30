@@ -21,7 +21,6 @@ export class SpaceshipController {
   constructor(private readonly useCases: ShipUseCases) {}
 
   @Get()
-  @Log()
   async getAll(): Promise<SpaceshipDTO[]> {
     const spaceships = await this.useCases.getAll();
     const result = spaceships.map((e) => SpaceshipMapper.toApi(e));
