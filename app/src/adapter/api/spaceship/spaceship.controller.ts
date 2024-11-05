@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { Log } from 'src/adapter/api/utils/log';
 import { ShipUseCases } from 'src/application/usecases/ship.usecase';
 import { CreateSpaceShipDTO } from 'src/domain/dto/create-spaceship.dto';
 import { DeleteSpaceshipDTO } from 'src/domain/dto/delete-spaceship.dto';
@@ -28,7 +27,6 @@ export class SpaceshipController {
   }
 
   @Get(':id')
-  @Log()
   async getOne(@Param() dto: IdDTO): Promise<SpaceshipDTO> {
     const spaceship = await this.useCases.getOne(dto);
     const result = SpaceshipMapper.toApi(spaceship);
@@ -36,7 +34,6 @@ export class SpaceshipController {
   }
 
   @Post()
-  @Log()
   async create(@Body() dto: CreateSpaceShipDTO) {
     const entity = await this.useCases.create(dto);
     const result = SpaceshipMapper.toApi(entity);
@@ -44,14 +41,12 @@ export class SpaceshipController {
   }
 
   @Delete(':id')
-  @Log()
   async delete(@Param() dto: DeleteSpaceshipDTO): Promise<SpaceshipDTO> {
     const spaceship = await this.useCases.delete(dto);
     return SpaceshipMapper.toApi(spaceship);
   }
 
   @Patch(':id')
-  @Log()
   async update(@Param() { id }: IdDTO, @Body() dto: UpdateSpaceshipDTO) {
     await this.useCases.update(id, dto);
   }

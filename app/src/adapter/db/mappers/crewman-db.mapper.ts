@@ -11,7 +11,7 @@ export class CrewmanDbMapper {
     salary,
   }) => {
     const model = new CrewmanModel();
-    model._id = id;
+    model.id = id;
     model.birthDate = birthDate;
     model.name = name;
     model.role = role;
@@ -21,7 +21,7 @@ export class CrewmanDbMapper {
   static toEntity: Mapper<CrewmanModel, CrewmanEntity> = (model) => {
     return {
       birthDate: model.birthDate,
-      id: model._id,
+      id: model.id,
       name: model.name,
       role: model.role,
       salary: model.salary,

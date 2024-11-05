@@ -5,21 +5,7 @@ import { SpaceshipEntity } from 'src/domain/entities/spaceship.entity';
 import { Repository } from 'typeorm';
 import { SpaceshipModel } from '../../entities/spaceship.model';
 import { SpaceshipRepositoryImplementation } from './spaceship.repository';
-
-type MockType<T> = {
-  [P in keyof T]?: jest.Mock<object>;
-};
-
-const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(() => ({
-  findOne: jest.fn(),
-  findOneBy: jest.fn(),
-  exists: jest.fn(),
-  existsBy: jest.fn(),
-  find: jest.fn(),
-  remove: jest.fn(),
-  update: jest.fn(),
-  save: jest.fn(),
-}));
+import { repositoryMockFactory } from 'src/infrastructure/tests/repository-mock-factory';
 
 describe('SpaceshipRepository', () => {
   let repository: SpaceshipRepositoryImplementation;
@@ -36,7 +22,9 @@ describe('SpaceshipRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<SpaceshipRepositoryImplementation>(SpaceshipRepositoryImplementation);
+    repository = module.get<SpaceshipRepositoryImplementation>(
+      SpaceshipRepositoryImplementation,
+    );
     spaceshipModelRepository = module.get<Repository<SpaceshipModel>>(
       getRepositoryToken(SpaceshipModel),
     );

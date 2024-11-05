@@ -1,28 +1,21 @@
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ApiException } from 'src/domain/base/api.exception';
-import { MockType } from 'src/infrastructure/tests/types';
+import { repositoryMockFactory } from 'src/infrastructure/tests/repository-mock-factory';
+import { Repository } from 'typeorm';
 import { CrewmanModel } from '../../entities/crewman.model';
 import { CrewmanRepositoryImplementation } from './crewman.repository';
 
-const repositoryMockFactory: () => MockType<Model<any>> = jest.fn(() => ({
-  exists: jest.fn(),
-  findByIdAndDelete: jest.fn(),
-  findByIdAndUpdate: jest.fn(),
-  findById: jest.fn(),
-}));
-
 describe('CrewmanRepository', () => {
   let repository: CrewmanRepositoryImplementation;
-  let mongooseModel: Model<CrewmanModel>;
+  let crewmanModelRepository: Repository<CrewmanModel>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CrewmanRepositoryImplementation,
         {
-          provide: getModelToken(CrewmanModel.name),
+          provide: getRepositoryToken(CrewmanModel),
           useFactory: repositoryMockFactory,
         },
       ],
@@ -31,8 +24,8 @@ describe('CrewmanRepository', () => {
     repository = module.get<CrewmanRepositoryImplementation>(
       CrewmanRepositoryImplementation,
     );
-    mongooseModel = module.get<Model<CrewmanModel>>(
-      getModelToken(CrewmanModel.name),
+    crewmanModelRepository = module.get<Repository<CrewmanModel>>(
+      getRepositoryToken(CrewmanModel),
     );
   });
 
@@ -43,24 +36,23 @@ describe('CrewmanRepository', () => {
   describe('remove', () => {
     it('should remove a crewmany by id', async () => {
       const id = 'id';
-      const existsSpy = jest
-        .spyOn(mongooseModel, 'exists')
-        .mockResolvedValue({ _id: id });
+      const findOneSpy = jest.spyOn(crewmanModelRepository, 'findOneBy');
+
       const model = new CrewmanModel();
-      model._id = id;
+      model.id = id;
+      findOneSpy.mockResolvedValueOnce(model);
 
       const removeSpy = jest
-        .spyOn(mongooseModel, 'findByIdAndDelete')
+        .spyOn(crewmanModelRepository, 'remove')
         .mockResolvedValue(model);
 
       const result = await repository.remove(id);
-      expect(existsSpy).toHaveBeenCalledWith({ _id: id });
       expect(removeSpy).toHaveBeenCalled();
       expect(result?.id).toBe(id);
     });
 
     it('should throw an exception if crewman not found', async () => {
-      jest.spyOn(mongooseModel, 'exists').mockResolvedValue(null);
+      jest.spyOn(crewmanModelRepository, 'findOneBy').mockResolvedValue(null);
 
       await expect(repository.remove('1')).rejects.toThrow(ApiException);
     });
@@ -69,17 +61,19 @@ describe('CrewmanRepository', () => {
   describe('get', () => {
     it('should return a crewman entity by id', async () => {
       const expectedModel: CrewmanModel = new CrewmanModel();
-      expectedModel._id = '1';
+      expectedModel.id = '1';
       jest
-        .spyOn(mongooseModel, 'findById')
+        .spyOn(crewmanModelRepository, 'findOneBy')
         .mockResolvedValueOnce(expectedModel);
 
       const result = await repository.get('1');
-      expect(result?.id).toEqual(expectedModel._id);
+      expect(result?.id).toEqual(expectedModel.id);
     });
 
     it('should return null if crewman with given id does not exist', async () => {
-      jest.spyOn(mongooseModel, 'findById').mockResolvedValueOnce(null);
+      jest
+        .spyOn(crewmanModelRepository, 'findOneBy')
+        .mockResolvedValueOnce(null);
 
       const result = await repository.get('1');
 
@@ -90,19 +84,23 @@ describe('CrewmanRepository', () => {
   describe('update', () => {
     it('should update a crewman entity by id', async () => {
       const id = 'id';
-      jest.spyOn(mongooseModel, 'exists').mockResolvedValueOnce({ _id: id });
+      jest
+        .spyOn(crewmanModelRepository, 'existsBy')
+        .mockResolvedValueOnce(true);
       const partialModel = { name: 'Updated Test' };
 
       await repository.update(id, partialModel);
 
-      expect(mongooseModel.findByIdAndUpdate).toHaveBeenCalledWith(
+      expect(crewmanModelRepository.update).toHaveBeenCalledWith(
         id,
         partialModel,
       );
     });
 
     it('should throw an exception if spaceship with given id does not exist', async () => {
-      jest.spyOn(mongooseModel, 'exists').mockResolvedValueOnce(null);
+      jest
+        .spyOn(crewmanModelRepository, 'existsBy')
+        .mockResolvedValueOnce(false);
 
       await expect(repository.update('1', {})).rejects.toThrow(ApiException);
     });

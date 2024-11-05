@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { Log } from 'src/adapter/api/utils/log';
 import { CrewInSpaceshipUseCases } from 'src/application/usecases/crew-in-spaceship.usecase';
 import { CreateCrewmanDTO } from 'src/domain/dto/create-crewman.dto';
 import { CrewmanDTO } from 'src/domain/dto/crewman.dto';
@@ -12,7 +11,6 @@ export class CrewInSpaceshipController {
   constructor(private readonly useCases: CrewInSpaceshipUseCases) {}
 
   @Get(':shipId/crew/:crewmanId')
-  @Log()
   async getOne(@Param() dto: CrewmanInSpaceshipDTO): Promise<CrewmanDTO> {
     const crewman = await this.useCases.getByShip(dto.shipId, dto.crewmanId);
     const result = CrewmanMapper.toApi(crewman);
@@ -20,7 +18,6 @@ export class CrewInSpaceshipController {
   }
 
   @Post(':id/crew/')
-  @Log()
   async create(@Param() { id }: IdDTO, @Body() dto: CreateCrewmanDTO) {
     const entity = await this.useCases.createByShip(id, dto);
     const result = CrewmanMapper.toApi(entity);
@@ -28,7 +25,6 @@ export class CrewInSpaceshipController {
   }
 
   @Delete(':shipId/crew/:crewmanId')
-  @Log()
   async delete(@Param() dto: CrewmanInSpaceshipDTO): Promise<CrewmanDTO> {
     const entity = await this.useCases.deleteByShip(dto.shipId, dto.crewmanId);
     return CrewmanMapper.toApi(entity);

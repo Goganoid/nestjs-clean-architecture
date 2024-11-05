@@ -1,23 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Query } from 'src/application/interfaces/query';
 import { CrewmanRepository } from 'src/application/repositories/crewman.abstract-repository';
 import { ApiException } from 'src/domain/base/api.exception';
 import { CrewmanEntity } from 'src/domain/entities/crewman.entity';
+import { Repository } from 'typeorm';
 import { CrewmanModel } from '../../entities/crewman.model';
 import { CrewmanDbMapper } from '../../mappers/crewman-db.mapper';
-import { Query } from 'src/application/interfaces/query';
-import { mapQuery } from './helpers/mapQuery';
 
 @Injectable()
 export class CrewmanRepositoryImplementation implements CrewmanRepository {
   constructor(
-    @InjectModel(CrewmanModel.name) private crewmanModel: Model<CrewmanModel>,
+    @InjectRepository(CrewmanModel)
+    private readonly crewmanRepository: Repository<CrewmanModel>,
   ) {}
 
   async getWhere(query: Query<CrewmanEntity>): Promise<CrewmanEntity[]> {
-    const models = await this.crewmanModel.find({
-      ...mapQuery(query),
+    const typedQuery = query satisfies Query<CrewmanEntity & CrewmanModel>;
+    const models = await this.crewmanRepository.find({
+      where: typedQuery.where,
+      relations: typedQuery.relations,
     });
     const entities = models.map(CrewmanDbMapper.toEntity);
     return entities;
@@ -25,35 +27,37 @@ export class CrewmanRepositoryImplementation implements CrewmanRepository {
   async getOneWhere(
     query: Query<CrewmanEntity>,
   ): Promise<CrewmanEntity | null> {
-    const model = await this.crewmanModel.findOne({
-      ...mapQuery(query),
+    const typedQuery = query satisfies Query<CrewmanEntity & CrewmanModel>;
+    const model = await this.crewmanRepository.findOne({
+      where: typedQuery.where,
+      relations: typedQuery.relations,
     });
     return model ? CrewmanDbMapper.toEntity(model) : null;
   }
   async getAll(): Promise<CrewmanEntity[]> {
-    const models = await this.crewmanModel.find();
+    const models = await this.crewmanRepository.find();
     const entities = models.map(CrewmanDbMapper.toEntity);
     return entities;
   }
   async get(id: string): Promise<CrewmanEntity | null> {
-    const model = await this.crewmanModel.findById(id);
+    const model = await this.crewmanRepository.findOneBy({ id });
     return model ? CrewmanDbMapper.toEntity(model) : null;
   }
   async create(item: CrewmanEntity) {
-    const created = await this.crewmanModel.create(
+    const created = await this.crewmanRepository.save(
       CrewmanDbMapper.fromEntity(item),
     );
     return CrewmanDbMapper.toEntity(created);
   }
   async update(id: string, item: Partial<CrewmanEntity>): Promise<void> {
-    const exists = await this.crewmanModel.exists({ _id: id });
+    const exists = await this.crewmanRepository.existsBy({ id: id });
     if (!exists) throw new ApiException('Crewman not found', 404);
-    await this.crewmanModel.findByIdAndUpdate(id, item);
+    await this.crewmanRepository.update(id, item);
   }
   async remove(id: string): Promise<CrewmanEntity> {
-    const exists = await this.crewmanModel.exists({ _id: id });
-    if (!exists) throw new ApiException('Crewman not found', 404);
-    const removed = await this.crewmanModel.findByIdAndDelete(id);
-    return CrewmanDbMapper.toEntity(removed!);
+    const entity = await this.crewmanRepository.findOneBy({ id: id });
+    if (!entity) throw new ApiException('Crewman not found', 404);
+    await this.crewmanRepository.remove(entity);
+    return CrewmanDbMapper.toEntity(entity);
   }
 }
