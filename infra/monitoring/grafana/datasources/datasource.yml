@@ -1,0 +1,61 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: Prometheus
+  - name: Tempo
+  - name: Loki
+
+datasources:
+- name: Prometheus
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: http://prometheus:9090
+  basicAuth: false
+  isDefault: true
+  version: 1
+  editable: false
+
+- name: Tempo
+  type: tempo
+  access: proxy
+  orgId: 1
+  url: http://tempo:3200
+  basicAuth: false
+  isDefault: false
+  version: 1
+  editable: true
+  apiVersion: 1
+  uid: tempo
+  jsonData:
+    httpMethod: GET
+    serviceMap:
+      datasourceUid: prometheus
+    tracesToLogs:
+      datasourceUid: Loki
+      spanStartTimeShift: '-1h'
+      spanEndTimeShift: '1h'
+      mapTagNamesEnabled: true
+      # for this feature to work the label in loki must match with label in traces
+      mappedTags: 
+        - key: service.name
+          value: app
+      filterByTraceID: true
+    
+
+- name: Loki
+  type: loki
+  access: proxy
+  orgId: 1
+  url: http://loki:3100
+  basicAuth: false
+  isDefault: false
+  version: 1
+  editable: false
+  apiVersion: 1
+  jsonData:
+    derivedFields:
+      - name: trace_id
+        datasourceUid: tempo
+        matcherRegex: '"trace_id":"(\w+)"'
+        url: $${__value.raw}
