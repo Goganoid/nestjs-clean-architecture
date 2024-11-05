@@ -16,26 +16,24 @@ import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import * as process from 'process';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const OTLP_URL = process.env.OTLP_URL!;
+const OTLP_SERVICE_NAME = process.env.OTLP_SERVICE_NAME!;
 
 const metricExporter = new OTLPMetricExporter({
-  url: 'http://localhost:4318/v1/metrics',
+  url: `${OTLP_URL}/metrics`,
 });
 
 const metricReader = new PeriodicExportingMetricReader({
   exporter: metricExporter,
   exportIntervalMillis: 5000,
 });
-// const hostMetricReader = new PeriodicExportingMetricReader({
-//   exporter: metricExporter,
-//   exportIntervalMillis: 5000,
-// });
-
-// const meterProvider = new MeterProvider({
-//   readers: [hostMetricReader],
-// });
 
 const traceExporter = new OTLPTraceExporter({
-  url: 'http://localhost:4318/v1/traces',
+  url: `${OTLP_URL}/traces`,
 });
 
 const spanProcessor = new BatchSpanProcessor(traceExporter);
@@ -58,9 +56,6 @@ const otelSDK = new NodeSDK({
         enabled: true,
       },
     }),
-    // new HttpInstrumentation(),
-    // new ExpressInstrumentation(),
-    // new NestInstrumentation(),
   ],
   textMapPropagator: new CompositePropagator({
     propagators: [
@@ -73,7 +68,7 @@ const otelSDK = new NodeSDK({
     ],
   }),
   resource: new Resource({
-    [ATTR_SERVICE_NAME]: `my-api`,
+    [ATTR_SERVICE_NAME]: OTLP_SERVICE_NAME,
   }),
 });
 

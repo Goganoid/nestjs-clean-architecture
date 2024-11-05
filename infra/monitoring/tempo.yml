@@ -15,15 +15,13 @@ distributor:
         http:
         grpc:
 
-ingester:
-  max_block_duration: 5m               # cut the headblock when this much time passes. this is being set for demo purposes and should probably be left alone normally
-
 compactor:
   compaction:
-    block_retention: 1h                # overall Tempo trace retention. set for demo purposes
+    block_retention: 168h
 
 metrics_generator:
   registry:
+    collection_interval: 1m
     external_labels:
       source: tempo
       cluster: docker-compose
@@ -40,3 +38,8 @@ storage:
       path: /tmp/tempo/wal             # where to store the the wal locally
     local:
       path: /tmp/tempo/blocks
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics]

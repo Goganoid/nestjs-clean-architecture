@@ -4,7 +4,7 @@ export const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
   metrics: {
     hostMetrics: true,
     apiMetrics: {
-      enable: true,
+      enable: false,
       ignoreRoutes: ['/metrics', '/favicon.ico'],
     },
   },

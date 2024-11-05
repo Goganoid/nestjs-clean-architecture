@@ -127,8 +127,8 @@ function getPinoHttpOption(level: string = 'info'): Options {
 
 export function getLoggerModuleOptions(configService: ConfigService): Params {
   const app = configService.get('OTLP_SERVICE_NAME') || 'app';
-  const level = 'trace';
-  const loki = 'http://localhost:3100';
+  const level = configService.get('OTLP_LOG_LEVEL') || 'trace';
+  const loki = configService.getOrThrow('LOKI_URL');
 
   return {
     pinoHttp: [

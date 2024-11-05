@@ -31,6 +31,17 @@ datasources:
     httpMethod: GET
     serviceMap:
       datasourceUid: prometheus
+    tracesToLogs:
+      datasourceUid: Loki
+      spanStartTimeShift: '-1h'
+      spanEndTimeShift: '1h'
+      mapTagNamesEnabled: true
+      # for this feature to work the label in loki must match with label in traces
+      mappedTags: 
+        - key: service.name
+          value: app
+      filterByTraceID: true
+    
 
 - name: Loki
   type: loki
@@ -44,7 +55,7 @@ datasources:
   apiVersion: 1
   jsonData:
     derivedFields:
-      - datasourceUid: tempo
-        matcherRegex: '"traceId":"([A-Za-z0-9]+)"'
-        name: TraceID
+      - name: trace_id
+        datasourceUid: tempo
+        matcherRegex: '"trace_id":"(\w+)"'
         url: $${__value.raw}

@@ -64,46 +64,19 @@ services:
       - "//var/run/docker.sock:/var/run/docker.sock"
       - "./scripts/localstack:/etc/localstack/init/ready.d"
 
-
-  # tempo_init:
-  #   image: &tempoImage grafana/tempo:latest
-  #   user: root
-  #   entrypoint:
-  #     - "chown"
-  #     - "10001:10001"
-  #     - "/var/tempo"
-  #   volumes:
-  #     - tempo_data:/var/tempo
-
-  # tempo:
-  #   container_name: tempo
-  #   image: *tempoImage
-  #   ports:
-  #     - "14268" # jaeger ingest
-  #     - "3200"  # tempo
-  #     - "4317"  # otlp grpc
-  #     - "4318"  # otlp http
-  #     - "9411"  # zipkin
-  #   volumes:
-  #     - ./infra/monitoring/tempo.yml:/etc/tempo.yml
-  #     - tempo_data:/tmp/tempo
-  #   command: -config.file=/etc/tempo.yml
-  #   restart: on-failure
-  #   depends_on:
-  #     - tempo_init
-
-  # tempo:
-  #   container_name: tempo
-  #   image: grafana/tempo:latest
-  #   ports:
-  #     - '3200'  # tempo
-  #     - '4317'  # otlp grpc
-  #     - '4318'  # otlp http
-  #   volumes:
-  #     - ./etc/infra/monitoring/tempo.yml:/etc/tempo.yml
-  #     - tempo_data:/tmp/tempo
-  #   command: -config.file=/etc/tempo.yml
-  #   restart: on-failure
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:latest
+    user: root
+    ports:
+      - '3200'  # tempo
+      - '4317'  # otlp grpc
+      - '4318'  # otlp http
+    volumes:
+      - ./infra/monitoring/tempo.yml:/etc/tempo.yml
+      - tempo_data:/tmp/tempo
+    command: -config.file=/etc/tempo.yml
+    restart: on-failure
 
   loki:
     container_name: loki
@@ -136,7 +109,7 @@ services:
       - "4317:4317"   # OTLP gRPC receiver
       - "4318:4318"   # OTLP HTTP receiver
     depends_on:
-      # - "tempo"
+      - "tempo"
       - "prometheus"
     volumes:
       - ./infra/monitoring/otel-collector.yml:/etc/otel-collector.yml
@@ -149,8 +122,6 @@ services:
     image: grafana/grafana:latest
     volumes:
       - ./infra/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-    #   - ./data/grafana-data/dashboards-provisioning:/etc/grafana/provisioning/dashboards
-      # - ./data/grafana-data/dashboards:/var/lib/grafana/dashboards
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin

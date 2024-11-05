@@ -10,15 +10,12 @@ receivers:
             - http://*
             - https://*
 
-# TODO: add resourcedetection,  hostmetrics
-
 processors:
   batch:
 
 exporters:
   otlp:
-    # endpoint: tempo:4317
-    endpoint: jaeger:4317
+    endpoint: tempo:4317
     tls:
       insecure: true
   prometheus:
