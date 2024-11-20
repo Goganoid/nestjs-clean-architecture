@@ -4,6 +4,7 @@ import { CrewInSpaceshipController } from './api/crewman/crew-in-spaceship.contr
 import { CrewmanController } from './api/crewman/crewman.controller';
 import { SpaceshipController } from './api/spaceship/spaceship.controller';
 import { DbModule } from './db/db.module';
+import { HealthController } from './api/health/health.controller';
 
 @Module({
   imports: [DbModule, ApplicationModule],
@@ -11,6 +12,7 @@ import { DbModule } from './db/db.module';
     SpaceshipController,
     CrewmanController,
     CrewInSpaceshipController,
+    HealthController,
   ],
   exports: [],
 })

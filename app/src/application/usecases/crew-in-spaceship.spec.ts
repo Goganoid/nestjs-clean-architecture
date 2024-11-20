@@ -2,7 +2,7 @@ import { TestBed } from '@automock/jest';
 import { ApiException } from 'src/domain/base/api.exception';
 import { CreateCrewmanDTO } from 'src/domain/dto/create-crewman.dto';
 import { CrewmanRole } from 'src/domain/enums/crewman-role.enum';
-import { SpaceshipCrewMessagePublisher } from '../interfaces/message-broker';
+import { SpaceshipCrewMessagePublisher } from '../interfaces/events';
 import { CrewmanRepository } from '../repositories/crewman.abstract-repository';
 import { CrewInSpaceshipUseCases } from './crew-in-spaceship.usecase';
 import { CrewmanUseCases } from './crewman.usecase';

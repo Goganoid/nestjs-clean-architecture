@@ -7,7 +7,6 @@ import { CrewmanModel } from 'src/adapter/db/entities/crewman.model';
 import { SpaceshipModel } from 'src/adapter/db/entities/spaceship.model';
 import { AppModule } from 'src/app.module';
 import { CrewmanRole } from 'src/domain/enums/crewman-role.enum';
-import { stopMongoInMemory } from 'src/infrastructure/tests/mongo-inmemory';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -65,7 +64,6 @@ describe('CrewInSpaceshipController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await stopMongoInMemory();
     await Promise.all([app.close()]);
   });
 

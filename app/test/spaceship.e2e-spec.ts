@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 import { SpaceshipModel } from 'src/adapter/db/entities/spaceship.model';
 import { AppModule } from 'src/app.module';
-import { stopMongoInMemory } from 'src/infrastructure/tests/mongo-inmemory';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -51,7 +50,6 @@ describe('SpaceshipController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await stopMongoInMemory();
     await Promise.all([app.close()]);
   });
 

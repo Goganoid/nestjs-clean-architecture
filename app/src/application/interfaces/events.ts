@@ -10,4 +10,4 @@ export abstract class MessageHandler<T> {
 }
 
 export abstract class SpaceshipCrewMessagePublisher extends MessagePublisher<SpaceshipCrewMessageData> {}
-export abstract class SpaceshipCrewMessageHandler extends MessageHandler<SpaceshipCrewMessageData> {}
+export abstract class SpaceshipCrewMessageSubscriber extends MessageHandler<SpaceshipCrewMessageData> {}

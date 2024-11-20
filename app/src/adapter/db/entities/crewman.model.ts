@@ -1,14 +1,20 @@
-import { Schema, SchemaFactory } from '@nestjs/mongoose';
+import { SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { BaseModelEntity } from 'src/domain/base/base.interface';
 import { CrewmanRole } from 'src/domain/enums/crewman-role.enum';
 import { ColumnNumericTransformer } from 'src/infrastructure/db/numeric-transformer';
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { SpaceshipModel } from './spaceship.model';
 
 export type CrewmanDocument = HydratedDocument<CrewmanModel>;
 
-@Schema()
+@Entity('crew')
 export class CrewmanModel implements BaseModelEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

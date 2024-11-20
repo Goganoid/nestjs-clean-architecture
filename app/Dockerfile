@@ -17,8 +17,5 @@ COPY test ./test
 # Build the application
 RUN npm run build
 
-# Expose the port the app runs in
-EXPOSE 6006 6007
-
 # The command to run the application
 CMD [ "npm", "run", "start:prod" ]

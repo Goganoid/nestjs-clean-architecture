@@ -1,29 +1,24 @@
-import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import {
-  SpaceshipCrewMessageHandler,
   SpaceshipCrewMessagePublisher,
-} from 'src/application/interfaces/message-broker';
-import { SPACESHIP_CREW_QUEUE } from 'src/infrastructure/bull/queues';
-import { SpacehipCrewMessageHandlerImplementation } from './spaceship-crew.message-handler';
-import { SpacehipCrewMessagePublisherImplementation } from './spaceship-crew.message-publisher';
+  SpaceshipCrewMessageSubscriber,
+} from 'src/application/interfaces/events';
+import { SpacehipCrewMessagePublisherImplementation } from './spaceship-crew.publisher';
+import { SpacehipCrewMessageSubscriberImplementation } from './spaceship-crew.subscriber';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: SPACESHIP_CREW_QUEUE,
-    }),
-  ],
+  imports: [EventEmitterModule.forRoot()],
   providers: [
     {
-      provide: SpaceshipCrewMessageHandler,
-      useClass: SpacehipCrewMessageHandlerImplementation,
+      provide: SpaceshipCrewMessageSubscriber,
+      useClass: SpacehipCrewMessageSubscriberImplementation,
     },
     {
       provide: SpaceshipCrewMessagePublisher,
       useClass: SpacehipCrewMessagePublisherImplementation,
     },
   ],
-  exports: [SpaceshipCrewMessageHandler, SpaceshipCrewMessagePublisher],
+  exports: [SpaceshipCrewMessageSubscriber, SpaceshipCrewMessagePublisher],
 })
-export class MessageBrokersModule {}
+export class EventsModule {}

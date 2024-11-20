@@ -3,7 +3,7 @@ import { CrewmanRepository } from 'src/application/repositories/crewman.abstract
 import { ApiException } from 'src/domain/base/api.exception';
 import { CreateCrewmanDTO } from 'src/domain/dto/create-crewman.dto';
 import { CrewmanEntity } from 'src/domain/entities/crewman.entity';
-import { SpaceshipCrewMessagePublisher } from '../interfaces/message-broker';
+import { SpaceshipCrewMessagePublisher } from '../interfaces/events';
 import { CrewmanUseCases } from './crewman.usecase';
 
 @Injectable()
