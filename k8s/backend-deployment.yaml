@@ -16,8 +16,7 @@ spec:
     spec:
       containers:
         - name: spaceship-api
-          image: spaceship-api:latest
-          imagePullPolicy: Never
+          image: goganoid/spaceship-api:latest
           envFrom:
             - configMapRef:
                 name: backend-env
@@ -41,7 +40,7 @@ spec:
   selector:
     app: backend
   ports:
-    - port: 8001
+    - port: 80
       targetPort: 8001  
 ---
 apiVersion: v1
