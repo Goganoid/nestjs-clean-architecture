@@ -5,6 +5,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import { otelSDK } from './infrastructure/monitoring/otel/instrumentation';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const CORS_ORIGINS = process.env.CORS_ORIGINS;
 
 async function bootstrap() {
   otelSDK.start();
@@ -20,6 +26,17 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  if (CORS_ORIGINS) {
+    const corsOptions: CorsOptions = {
+      origin: CORS_ORIGINS!.split(','),
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    };
+
+    app.enableCors(corsOptions);
+  }
 
   await app.listen(8001);
 }
